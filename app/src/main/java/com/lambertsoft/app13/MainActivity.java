@@ -1,5 +1,8 @@
 package com.lambertsoft.app13;
 
+import android.accounts.Account;
+import android.accounts.AccountAuthenticatorActivity;
+import android.accounts.AccountManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,10 +21,11 @@ import com.kinvey.java.User;
 
 public class MainActivity extends ActionBarActivity {
 
-    Button buttonLogin, buttonSetUp;
+    Button buttonLogin, buttonSetUp, buttonLogout, buttonEnd, buttonUpdate;
     TextView textUsername, textPassword;
+    Boolean flagSetup, flagLogin;
+    User actualUser;
     Client myKinveyClient;
-
 
 
     @Override
@@ -31,16 +35,20 @@ public class MainActivity extends ActionBarActivity {
 
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
         buttonSetUp = (Button) findViewById(R.id.buttonSetup);
+        buttonLogout = (Button) findViewById(R.id.buttonLogout);
+        buttonEnd = (Button)findViewById(R.id.buttonEnd);
+        buttonUpdate = (Button) findViewById(R.id.buttonUpdate);
 
         textUsername = (TextView) findViewById(R.id.textUserName);
         textPassword = (TextView) findViewById(R.id.textPassword);
 
-        myKinveyClient = new Client.Builder("kid_WyE5rmap_", "b5f06467ecea486096b5e47104e4e098", getApplicationContext()).build();
+        myKinveyClient = SplashActivity.myKinveyClient;
 
         buttonSetUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 myKinveyClient.user().create(textUsername.getText().toString(), textPassword.getText().toString(), new SetupUserCallback() );
+
             }
         });
 
@@ -51,8 +59,29 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        buttonLogout.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myKinveyClient.user().logout().execute();
+                CharSequence text = "Logout...";
+                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+            }
+        });
 
+        buttonEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
+        buttonUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CharSequence text = "State: " + myKinveyClient.user().isUserLoggedIn() + "  - UserName: " + myKinveyClient.user().getUsername();
+                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -88,6 +117,7 @@ private class LoginUserCallback implements KinveyUserCallback {
     public void onSuccess(User u) {
         CharSequence text = "Welcome back," + u.getUsername() + ".";
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+
     }
 }
 
@@ -104,6 +134,7 @@ public void onFailure(Throwable t) {
 public void onSuccess(User u) {
         CharSequence text = u.getUsername() + ", your account has been created.";
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+
         }
 }
 
