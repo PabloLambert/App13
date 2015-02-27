@@ -39,7 +39,6 @@ public class SplashActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
-
         buttonUpdateUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
