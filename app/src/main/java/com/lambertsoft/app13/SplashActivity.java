@@ -1,7 +1,5 @@
 package com.lambertsoft.app13;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -10,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kinvey.android.Client;
 
@@ -17,40 +16,62 @@ import com.kinvey.android.Client;
 public class SplashActivity extends ActionBarActivity {
 
     public static Client myKinveyClient;
-
-    TextView textStatus;
-    Button buttonAuth, buttonUpdateUser;
+    Button buttonLogout;
+    TextView textUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        textStatus = (TextView) findViewById(R.id.textStatus);
-        buttonAuth = (Button) findViewById(R.id.buttonAuth);
-        buttonUpdateUser = (Button) findViewById(R.id.buttonUpdateUser);
+        buttonLogout = (Button) findViewById(R.id.buttonLogout);
 
         myKinveyClient = new Client.Builder("kid_WyE5rmap_", "b5f06467ecea486096b5e47104e4e098", getApplicationContext()).build();
 
-        buttonAuth.setOnClickListener(new View.OnClickListener() {
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+                myKinveyClient.user().logout().execute();
+                CharSequence text = "Logout...";
+                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
-            }
-        });
-        buttonUpdateUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String text = "State: " + myKinveyClient.user().isUserLoggedIn() + "  - UserName: " + myKinveyClient.user().getUsername();
-
-                textStatus.setText(text);
 
             }
         });
+
+        if (myKinveyClient.user().isUserLoggedIn()) {
+
+            buttonLogout.setEnabled(false);
+            fillData();
+
+        } else {
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+
+        }
+
+
 
     }
+
+    public void fillData() {
+
+        textUsername = (TextView) findViewById(R.id.textUsername);
+    }
+
+
+/*
+@Override
+public void onResume() {
+
+}
+
+*/
 
 
 
