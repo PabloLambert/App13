@@ -1,10 +1,8 @@
 package com.lambertsoft.app13;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,18 +13,21 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.kinvey.android.AsyncAppData;
+import com.kinvey.android.AsyncUser;
 import com.kinvey.android.Client;
+import com.kinvey.android.callback.KinveyListCallback;
+import com.kinvey.java.Query;
 
 
 public class SplashActivity extends FragmentActivity {
 
     public static Client myKinveyClient;
-    Button buttonLogout;
+    Button buttonLogout, buttonAddStudent;
     TextView textUsername;
 
 
@@ -40,6 +41,7 @@ public class SplashActivity extends FragmentActivity {
         setContentView(R.layout.activity_splash);
 
         buttonLogout = (Button) findViewById(R.id.buttonLogout);
+        buttonAddStudent = (Button) findViewById(R.id.buttonAddStudent);
         textUsername = (TextView) findViewById(R.id.textUserName);
         mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 
@@ -57,11 +59,20 @@ public class SplashActivity extends FragmentActivity {
             }
         });
 
+        buttonAddStudent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), StudentActivity.class);
+                startActivity(intent);
+            }
+        });
+
         myKinveyClient = new Client.Builder("kid_WyE5rmap_", "b5f06467ecea486096b5e47104e4e098", getApplicationContext()).build();
+
 
         if (myKinveyClient.user().isUserLoggedIn()) {
 
-            buttonLogout.setEnabled(false);
+            //buttonLogout.setEnabled(false);
             fillData();
 
         } else {
@@ -83,7 +94,31 @@ public class SplashActivity extends FragmentActivity {
         Marker Home = mMap.addMarker( new MarkerOptions().position(HOME).title("Home"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HOME, 10));
 
-        textUsername.setText("Bienvenido:...");
+        textUsername.setText("Bienvenido: " + myKinveyClient.user().getUsername());
+        String Id = myKinveyClient.user().getId();
+
+        final Students students = new Students();
+        Query mQuery = myKinveyClient.query();
+        mQuery.equals("id_user", Id);
+        AsyncAppData<Students> myStudents = myKinveyClient.appData("Students", Students.class);
+
+        myStudents.get(mQuery, new KinveyListCallback<Students>() {
+                    @Override
+                    public void onSuccess(Students[] studentses) {
+
+                        CharSequence text = "There are: " + students.size() ;
+                        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        CharSequence text = "Could not query students...";
+                        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+
     }
 
 
