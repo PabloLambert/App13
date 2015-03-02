@@ -1,6 +1,9 @@
 package com.lambertsoft.app13;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,14 +13,25 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.kinvey.android.Client;
 
 
-public class SplashActivity extends ActionBarActivity {
+public class SplashActivity extends FragmentActivity {
 
     public static Client myKinveyClient;
     Button buttonLogout;
     TextView textUsername;
+
+
+    private GoogleMap mMap;
+    private final LatLng HOME = new LatLng(-33.4311092,-70.5950772);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +40,8 @@ public class SplashActivity extends ActionBarActivity {
         setContentView(R.layout.activity_splash);
 
         buttonLogout = (Button) findViewById(R.id.buttonLogout);
-
-        myKinveyClient = new Client.Builder("kid_WyE5rmap_", "b5f06467ecea486096b5e47104e4e098", getApplicationContext()).build();
+        textUsername = (TextView) findViewById(R.id.textUserName);
+        mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,6 +56,8 @@ public class SplashActivity extends ActionBarActivity {
 
             }
         });
+
+        myKinveyClient = new Client.Builder("kid_WyE5rmap_", "b5f06467ecea486096b5e47104e4e098", getApplicationContext()).build();
 
         if (myKinveyClient.user().isUserLoggedIn()) {
 
@@ -61,17 +77,14 @@ public class SplashActivity extends ActionBarActivity {
 
     public void fillData() {
 
-        textUsername = (TextView) findViewById(R.id.textUsername);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+        Marker Home = mMap.addMarker( new MarkerOptions().position(HOME).title("Home"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HOME, 10));
+
+        textUsername.setText("Bienvenido:...");
     }
-
-
-/*
-@Override
-public void onResume() {
-
-}
-
-*/
 
 
 
@@ -79,7 +92,7 @@ public void onResume() {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_splash, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

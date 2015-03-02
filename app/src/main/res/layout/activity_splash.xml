@@ -7,55 +7,41 @@
     tools:context="com.lambertsoft.app13.SplashActivity"
     >
 
-    <LinearLayout
-        android:orientation="vertical"
+    <TextView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/textUserName"
+        android:layout_alignParentTop="true" />
 
-        <TextView android:text="FurgonEscolar" android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView1"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="10dp"
-            android:layout_gravity="center_horizontal" />
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Bienvenido: "
-                android:id="@+id/textView4" />
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/textUsername" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <Button
+    <fragment
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Salir"
-        android:id="@+id/buttonLogout"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/textView1"
-        android:layout_toEndOf="@+id/textView1" />
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:id="@+id/map"
+        android:layout_below="@id/textUserName"
+ />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Agregar"
+            android:id="@+id/button" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Salir"
+            android:id="@+id/buttonLogout"
+            android:layout_alignParentBottom="true"
+
+             />
+    </LinearLayout>
 
 </RelativeLayout>
