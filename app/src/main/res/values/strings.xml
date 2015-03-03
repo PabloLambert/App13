@@ -8,5 +8,9 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_student">StudentActivity</string>
+    <string name="action_search">Buscar</string>
+    <string name="action_exit">Salir</string>
+    <string name="action_refresh">Actualizar</string>
+    <string name="action_logout">Salir</string>
 
 </resources>

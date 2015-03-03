@@ -4,6 +4,7 @@ package com.lambertsoft.app13;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,12 +23,15 @@ import com.kinvey.android.AsyncUser;
 import com.kinvey.android.Client;
 import com.kinvey.android.callback.KinveyListCallback;
 import com.kinvey.java.Query;
+import com.kinvey.java.auth.Credential;
+
+import java.io.IOException;
 
 
-public class SplashActivity extends FragmentActivity {
+public class SplashActivity extends ActionBarActivity {
 
     public static Client myKinveyClient;
-    Button buttonLogout, buttonAddStudent;
+    Button buttonLogout, buttonAddStudent, buttonFillData;
     TextView textUsername;
 
 
@@ -42,22 +46,9 @@ public class SplashActivity extends FragmentActivity {
 
         buttonLogout = (Button) findViewById(R.id.buttonLogout);
         buttonAddStudent = (Button) findViewById(R.id.buttonAddStudent);
+        buttonFillData = (Button) findViewById(R.id.buttonFillData);
         textUsername = (TextView) findViewById(R.id.textUserName);
         mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                myKinveyClient.user().logout().execute();
-                CharSequence text = "Logout...";
-                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
-
-            }
-        });
 
         buttonAddStudent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,21 +59,6 @@ public class SplashActivity extends FragmentActivity {
         });
 
         myKinveyClient = new Client.Builder("kid_WyE5rmap_", "b5f06467ecea486096b5e47104e4e098", getApplicationContext()).build();
-
-
-        if (myKinveyClient.user().isUserLoggedIn()) {
-
-            //buttonLogout.setEnabled(false);
-            fillData();
-
-        } else {
-
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(intent);
-
-        }
-
-
 
     }
 
@@ -106,7 +82,7 @@ public class SplashActivity extends FragmentActivity {
                     @Override
                     public void onSuccess(Students[] studentses) {
 
-                        CharSequence text = "There are: " + students.size() ;
+                        CharSequence text = "There are: " + studentses.length ;
                         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
                     }
 
@@ -121,6 +97,32 @@ public class SplashActivity extends FragmentActivity {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+        if (myKinveyClient.user().isUserLoggedIn()) {
+
+            try {
+                myKinveyClient.user().retrieveBlocking();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            //buttonLogout.setEnabled(false);
+            fillData();
+
+        } else {
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+
+        }
+
+
+    }
 
 
     @Override
@@ -138,11 +140,27 @@ public class SplashActivity extends FragmentActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            actionLogout();
+            return true;
+        }
+        if (id == R.id.action_refresh ) {
+            fillData();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+
+    public void actionLogout() {
+
+        myKinveyClient.user().logout().execute();
+        CharSequence text = "Logout...";
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
+
+    }
 }

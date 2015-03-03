@@ -31,6 +31,12 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="FillData"
+            android:id="@+id/buttonFillData" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Agregar"
             android:id="@+id/buttonAddStudent" />
 

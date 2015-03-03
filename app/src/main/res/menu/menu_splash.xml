@@ -4,12 +4,14 @@
     tools:context="com.lambertsoft.app13.SplashActivity">
 
 
-    <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom" />
+    <item android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/action_refresh"
+        app:showAsAction="ifRoom" />
 
-
+    <item android:id="@+id/action_logout"
+        android:icon="@drawable/ic_action_star"
+        android:title="@string/action_logout"
+        app:showAsAction="ifRoom" />
 
 </menu>
