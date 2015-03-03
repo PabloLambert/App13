@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,9 +32,9 @@ import java.io.IOException;
 public class SplashActivity extends ActionBarActivity {
 
     public static Client myKinveyClient;
-    Button buttonLogout, buttonAddStudent, buttonFillData;
+    Button buttonAddStudent;
     TextView textUsername;
-
+    LinearLayout linearLayoutBottom, ll;
 
     private GoogleMap mMap;
     private final LatLng HOME = new LatLng(-33.4311092,-70.5950772);
@@ -44,10 +45,15 @@ public class SplashActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        buttonLogout = (Button) findViewById(R.id.buttonLogout);
         buttonAddStudent = (Button) findViewById(R.id.buttonAddStudent);
-        buttonFillData = (Button) findViewById(R.id.buttonFillData);
         textUsername = (TextView) findViewById(R.id.textUserName);
+        linearLayoutBottom = (LinearLayout) findViewById(R.id.linearLayoutBottom);
+
+        ll = new LinearLayout(getApplicationContext());
+        ll.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayoutBottom.addView(ll);
+
+
         mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 
         buttonAddStudent.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +66,20 @@ public class SplashActivity extends ActionBarActivity {
 
         myKinveyClient = new Client.Builder("kid_WyE5rmap_", "b5f06467ecea486096b5e47104e4e098", getApplicationContext()).build();
 
+        if (myKinveyClient.user().isUserLoggedIn()) {
+
+            String UserName;
+            do {
+                try {
+                    myKinveyClient.user().retrieveBlocking();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                UserName = myKinveyClient.user().getUsername();
+
+            } while (UserName == null);
+
+        }
     }
 
     public void fillData() {
@@ -80,10 +100,31 @@ public class SplashActivity extends ActionBarActivity {
 
         myStudents.get(mQuery, new KinveyListCallback<Students>() {
                     @Override
-                    public void onSuccess(Students[] studentses) {
+                    public void onSuccess(Students[] studentsArray) {
 
-                        CharSequence text = "There are: " + studentses.length ;
-                        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+                        ll.removeAllViews();
+
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                        for (int i=0; i < studentsArray.length; i++ ) {
+                            Button btn = new Button(getApplicationContext());
+                            btn.setId(i+1);
+                            btn.setText(studentsArray[i].getFirst_name());
+                            btn.setLayoutParams(params);
+                            btn.setOnClickListener( new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    CharSequence text = "Hello";
+                                    Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+                            ll.addView(btn);
+
+                        }
+
+                        //Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -101,17 +142,8 @@ public class SplashActivity extends ActionBarActivity {
     public void onResume() {
         super.onResume();
 
-
         if (myKinveyClient.user().isUserLoggedIn()) {
 
-            try {
-                myKinveyClient.user().retrieveBlocking();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            //buttonLogout.setEnabled(false);
             fillData();
 
         } else {
@@ -120,8 +152,6 @@ public class SplashActivity extends ActionBarActivity {
             startActivity(intent);
 
         }
-
-
     }
 
 

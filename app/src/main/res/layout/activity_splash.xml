@@ -26,13 +26,8 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="FillData"
-            android:id="@+id/buttonFillData" />
+        android:layout_alignParentBottom="true"
+        android:id="@+id/linearLayoutBottom">
 
         <Button
             android:layout_width="wrap_content"
@@ -40,14 +35,6 @@
             android:text="Agregar"
             android:id="@+id/buttonAddStudent" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Salir"
-            android:id="@+id/buttonLogout"
-            android:layout_alignParentBottom="true"
-
-             />
     </LinearLayout>
 
 </RelativeLayout>

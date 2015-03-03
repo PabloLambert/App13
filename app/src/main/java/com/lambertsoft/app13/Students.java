@@ -33,4 +33,8 @@ public class Students extends GenericJson { // For Serialization
         last_name = _last_name;
         id_user = _id_user;
     }
+
+    public String getFirst_name() {
+        return first_name;
+    }
 }
