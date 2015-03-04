@@ -12,5 +12,6 @@
     <string name="action_exit">Salir</string>
     <string name="action_refresh">Actualizar</string>
     <string name="action_logout">Salir</string>
+    <string name="action_user_add">Agregar</string>
 
 </resources>
