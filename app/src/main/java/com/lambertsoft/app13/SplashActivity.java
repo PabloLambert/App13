@@ -131,7 +131,7 @@ public class SplashActivity extends ActionBarActivity {
 
                         ActionBar.Tab tab = actionBar.newTab().setText(studentsArray[i].getFirst_name());
 
-                        tab.setTabListener(new MyTabListener(new FragmentTab(studentsArray[i].getId())));
+                        tab.setTabListener(new MyTabListener(new FragmentTab()));
                         actionBar.addTab(tab);
                     }
                 }
@@ -162,88 +162,3 @@ public class SplashActivity extends ActionBarActivity {
 
 }
 
-
-class FragmentTab extends Fragment {
-    final static String TAG = FragmentTab.class.getSimpleName();
-    final LatLng HOME = new LatLng(-33.4311092,-70.5950772);
-
-    String Id;
-    GoogleMap mMap;
-    SupportMapFragment fragment;
-    Button buttonViewCar;
-    TextView textUserName;
-
-    public FragmentTab(String _Id) {
-        Id = _Id;
-    }
-
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_map, container, false);
-
-        textUserName = (TextView) view.findViewById(R.id.textUserName);
-        textUserName.setText(Id);
-        buttonViewCar = (Button) view.findViewById(R.id.buttonViewCar);
-
-        buttonViewCar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-               if (mMap == null) {
-                    Log.e(TAG, "mMap is null");
-                } else {
-
-                    mMap.getUiSettings().setZoomControlsEnabled(true);
-                    mMap.getUiSettings().setMyLocationButtonEnabled(true);
-
-                    Marker Home = mMap.addMarker(new MarkerOptions().position(HOME).title("Home"));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HOME, 10));
-
-                }
-            }
-
-        });
-
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        FragmentManager fm = getChildFragmentManager();
-        fragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
-        if (fragment == null) {
-            fragment = SupportMapFragment.newInstance();
-            fm.beginTransaction().replace(R.id.map, fragment).commit();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mMap == null) {
-            mMap = fragment.getMap();
-            mMap.addMarker(new MarkerOptions().position(HOME));
-        }
-    }
-}
-
-class MyTabListener implements ActionBar.TabListener {
-    Fragment fragment;
-
-    public MyTabListener(Fragment fragment) {
-        this.fragment = fragment;
-    }
-
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        ft.replace(R.id.fragment_container, fragment);
-    }
-
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-        ft.remove(fragment);
-    }
-
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-        // nothing done here
-    }
-}
