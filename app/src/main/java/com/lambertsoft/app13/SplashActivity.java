@@ -169,6 +169,7 @@ class FragmentTab extends Fragment {
 
     String Id;
     GoogleMap mMap;
+    SupportMapFragment fragment;
     Button buttonViewCar;
     TextView textUserName;
 
@@ -184,30 +185,11 @@ class FragmentTab extends Fragment {
         textUserName.setText(Id);
         buttonViewCar = (Button) view.findViewById(R.id.buttonViewCar);
 
-
-
-        FragmentManager fm = getFragmentManager();
-        SupportMapFragment supportMapFragment = (SupportMapFragment)fm.findFragmentById(R.id.map);
-        if (supportMapFragment != null) {
-            mMap = supportMapFragment.getMap();
-        } else {
-            Log.e(TAG, "SupportMapFragment is null");
-        }
-
         buttonViewCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                FragmentManager fm = getFragmentManager();
-                SupportMapFragment supportMapFragment = (SupportMapFragment)fm.findFragmentById(R.id.map);
-                if (supportMapFragment != null) {
-                    mMap = supportMapFragment.getMap();
-                } else {
-                    Log.e(TAG, "SupportMapFragment is null");
-                }
-
-
-                if (mMap == null) {
+               if (mMap == null) {
                     Log.e(TAG, "mMap is null");
                 } else {
 
@@ -223,6 +205,26 @@ class FragmentTab extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        FragmentManager fm = getChildFragmentManager();
+        fragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
+        if (fragment == null) {
+            fragment = SupportMapFragment.newInstance();
+            fm.beginTransaction().replace(R.id.map, fragment).commit();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mMap == null) {
+            mMap = fragment.getMap();
+            mMap.addMarker(new MarkerOptions().position(HOME));
+        }
     }
 }
 
